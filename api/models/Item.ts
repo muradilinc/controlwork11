@@ -31,8 +31,14 @@ const ItemSchema = new Schema({
       message: 'The price can not be below zero!',
     },
   },
-  description: String,
-  image: String,
+  description: {
+    type: String,
+    required: true,
+  },
+  image: {
+    type: String,
+    required: true,
+  },
   owner: {
     type: Schema.Types.ObjectId,
     ref: 'User',

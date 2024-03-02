@@ -1,13 +1,15 @@
-import { Item } from '../../types';
+import { Item, ValidationError } from '../../types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { getItemById, getItems } from './itemsThunk';
+import { createItem, getItemById, getItems } from './itemsThunk';
 
 interface ItemsState {
   items: Item[];
   item: Item | null;
   itemsLoading: boolean;
   itemLoading: boolean;
+  createLoading: boolean;
+  itemError: ValidationError | null;
 }
 
 const initialState: ItemsState = {
@@ -15,6 +17,8 @@ const initialState: ItemsState = {
   item: null,
   itemsLoading: false,
   itemLoading: false,
+  createLoading: false,
+  itemError: null,
 };
 
 const itemsSlice = createSlice({
@@ -22,8 +26,18 @@ const itemsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(createItem.pending, (state) => {
+      state.createLoading = true;
+    });
+    builder.addCase(createItem.fulfilled, (state) => {
+      state.createLoading = false;
+    });
+    builder.addCase(createItem.rejected, (state, { payload: error }) => {
+      state.createLoading = false;
+      state.itemError = error || null;
+    });
     builder.addCase(getItems.pending, (state) => {
-      state.itemsLoading = false;
+      state.itemsLoading = true;
     });
     builder.addCase(
       getItems.fulfilled,
@@ -57,3 +71,4 @@ export const selectItem = (state: RootState) => state.items.item;
 export const selectItemsLoading = (state: RootState) =>
   state.items.itemsLoading;
 export const selectItemLoading = (state: RootState) => state.items.itemLoading;
+export const selectItemError = (state: RootState) => state.items.itemError;

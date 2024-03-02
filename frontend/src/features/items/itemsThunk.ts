@@ -1,7 +1,45 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Item } from '../../types';
+import { Item, ItemMutation, ValidationError } from '../../types';
 import axiosApi from '../../http/axiosApi';
 import { RootState } from '../../app/store';
+import { isAxiosError } from 'axios';
+
+export const createItem = createAsyncThunk<
+  void,
+  ItemMutation,
+  { state: RootState; rejectValue: ValidationError }
+>('items/create', async (item, { getState, rejectWithValue }) => {
+  try {
+    const token = getState().users.user?.token;
+    const userId = getState().users.user?._id;
+    const formData = new FormData();
+    formData.append('title', item.title);
+    formData.append('description', item.description);
+    formData.append('price', item.price);
+    if (userId) {
+      formData.append('owner', userId);
+    }
+    formData.append('category', item.category);
+    if (item.image) {
+      formData.append('image', item.image);
+    }
+    await axiosApi.post('/items', formData, {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+      },
+    });
+  } catch (error) {
+    if (
+      isAxiosError(error) &&
+      error.response &&
+      error.response.status === 422
+    ) {
+      return rejectWithValue(error.response.data);
+    }
+
+    throw error;
+  }
+});
 
 export const getItems = createAsyncThunk<Item[], string | undefined>(
   'items/getAll',

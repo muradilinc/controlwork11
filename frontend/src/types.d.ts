@@ -54,3 +54,11 @@ export interface Item {
   category: Category;
   owner: User;
 }
+
+export interface ItemMutation {
+  category: string;
+  title: string;
+  description: string;
+  price: string;
+  image: File | null;
+}
