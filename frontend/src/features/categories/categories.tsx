@@ -1,16 +1,28 @@
 import {
   Box,
-  Divider,
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { selectCategories } from './categoriesSlice';
+import { useEffect } from 'react';
+import { getCategories } from './categoriesThunk';
+import { getItems } from '../items/itemsThunk';
 
 const Categories = () => {
+  const categories = useAppSelector(selectCategories);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getCategories());
+  }, [dispatch]);
+
+  const selectCategory = async (id: string) => {
+    await dispatch(getItems(id));
+  };
+
   return (
     <Box
       sx={{
@@ -21,39 +33,20 @@ const Categories = () => {
         borderRight: '1px solid gray',
       }}
     >
-      <nav aria-label="main mailbox folders">
-        <List>
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary="Inbox" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <DraftsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Drafts" />
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </nav>
-      <Divider />
       <nav aria-label="secondary mailbox folders">
         <List>
           <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText primary="Trash" />
+            <ListItemButton onClick={() => dispatch(getItems())}>
+              <ListItemText>All items</ListItemText>
             </ListItemButton>
           </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component="a" href="#simple-list">
-              <ListItemText primary="Spam" />
-            </ListItemButton>
-          </ListItem>
+          {categories.map((category) => (
+            <ListItem key={category._id} disablePadding>
+              <ListItemButton onClick={() => selectCategory(category._id)}>
+                <ListItemText>{category.title}</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
       </nav>
     </Box>

@@ -5,16 +5,21 @@ import { getItems } from './itemsThunk';
 import {
   Button,
   Card,
+  CardActionArea,
   CardActions,
   CardContent,
   CardMedia,
   Grid,
+  styled,
   Typography,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { BASE_URL } from '../../constants/links';
 import Spinner from '../../components/Spinner/Spinner';
+import { selectUser } from '../users/usersSlice';
 
 const Items = () => {
+  const user = useAppSelector(selectUser);
   const items = useAppSelector(selectItems);
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectItemsLoading);
@@ -23,6 +28,14 @@ const Items = () => {
     dispatch(getItems());
   }, [dispatch]);
 
+  const LinkItem = styled(Link)({
+    color: 'inherit',
+    textDecoration: 'none',
+    '&:hover': {
+      color: 'inherit',
+    },
+  });
+
   if (loading) {
     return <Spinner />;
   }
@@ -30,22 +43,33 @@ const Items = () => {
     <Grid container spacing={2}>
       {items.map((item) => (
         <Grid item key={item._id}>
-          <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-              sx={{ height: 140 }}
-              image={BASE_URL + '/' + item.image}
-              title="green iguana"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                {item.title}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small">Share</Button>
-              <Button size="small">Learn More</Button>
-            </CardActions>
-          </Card>
+          <LinkItem to={`/items/` + item._id}>
+            <Card sx={{ maxWidth: 345, minWidth: 250 }}>
+              <CardActionArea>
+                <CardMedia
+                  component="img"
+                  alt="item"
+                  height="140"
+                  image={BASE_URL + '/' + item.image}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {item.title}
+                  </Typography>
+                  <Typography gutterBottom variant="body1" component="div">
+                    {item.price} KGS
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+              {item.owner._id === user?._id ? (
+                <CardActions>
+                  <Button size="small" color="error">
+                    Delete
+                  </Button>
+                </CardActions>
+              ) : null}
+            </Card>
+          </LinkItem>
         </Grid>
       ))}
     </Grid>
