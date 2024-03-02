@@ -4,6 +4,7 @@ import RegisterPage from './features/users/RegisterPage';
 import Header from './components/Header/Header';
 import ItemsPage from './features/items/ItemsPage';
 import ItemPage from './features/items/ItemPage';
+import LoginPage from './features/users/LoginPage';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<ItemsPage />} />
             <Route path="/items/:id" element={<ItemPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Routes>
         </Container>

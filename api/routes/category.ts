@@ -25,7 +25,7 @@ categoriesRouter.post('/', async (req, res, next) => {
       return res.status(422).send({ message: 'Title should be unique' });
     }
 
-    next(e);
+    return next(e);
   }
 });
 
@@ -34,7 +34,18 @@ categoriesRouter.get('/', async (_req, res, next) => {
     const categories = await Category.find();
     return res.send(categories);
   } catch (e) {
-    next(e);
+    return next(e);
+  }
+});
+
+categoriesRouter.get('/:categoryId', async (req, res, next) => {
+  try {
+    const categories = await Item.find({
+      category: req.params.categoryId,
+    }).populate('owner', 'nickname, phone');
+    return res.send(categories);
+  } catch (e) {
+    return next(e);
   }
 });
 

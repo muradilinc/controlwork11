@@ -28,27 +28,18 @@ itemsRouter.post(
         return res.status(422).send(e);
       }
 
-      next(e);
+      return next(e);
     }
   },
 );
 
 itemsRouter.get('/', async (_req, res, next) => {
   try {
-    const results = await Item.find().populate('owner');
+    const results = await Item.find().populate('owner', 'nickname phone');
 
     res.send(results);
   } catch (e) {
     return next(e);
-  }
-});
-
-itemsRouter.get('/:categoryId', async (req, res, next) => {
-  try {
-    const categories = await Item.find({ category: req.params.categoryId });
-    return res.send(categories);
-  } catch (e) {
-    next(e);
   }
 });
 
@@ -61,15 +52,34 @@ itemsRouter.get('/:id', async (req, res, next) => {
       return res.status(404).send({ error: 'Wrong ObjectId!' });
     }
 
-    const item = await Item.findById(_id);
+    const item = await Item.findById(_id).populate('owner', 'nickname phone');
 
     if (!item) {
       return res.status(404).send({ error: 'Not found!' });
     }
 
-    res.send(item);
+    return res.send(item);
   } catch (e) {
-    next(e);
+    return next(e);
+  }
+});
+
+itemsRouter.delete('/:id', auth, async (req: RequestWithUser, res, next) => {
+  try {
+    let _id: Types.ObjectId;
+    try {
+      _id = new Types.ObjectId(req.params.id);
+    } catch {
+      return res.status(404).send({ error: 'Wrong ObjectId!' });
+    }
+    const results = await Item.findByIdAndDelete(_id);
+    if (!results) {
+      return res.status(404).send({ error: 'Not found!' });
+    }
+
+    return res.send(results);
+  } catch (error) {
+    return next(error);
   }
 });
 

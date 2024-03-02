@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectItems, selectItemsLoading } from './itemsSlice';
-import { getItems } from './itemsThunk';
+import { deleteItem, getItems } from './itemsThunk';
 import {
   Button,
   Card,
@@ -43,9 +43,9 @@ const Items = () => {
     <Grid container spacing={2}>
       {items.map((item) => (
         <Grid item key={item._id}>
-          <LinkItem to={`/items/` + item._id}>
-            <Card sx={{ maxWidth: 345, minWidth: 250 }}>
-              <CardActionArea>
+          <Card sx={{ maxWidth: 345, minWidth: 250 }}>
+            <CardActionArea>
+              <LinkItem to={`/items/` + item._id}>
                 <CardMedia
                   component="img"
                   alt="item"
@@ -60,16 +60,20 @@ const Items = () => {
                     {item.price} KGS
                   </Typography>
                 </CardContent>
-              </CardActionArea>
-              {item.owner._id === user?._id ? (
-                <CardActions>
-                  <Button size="small" color="error">
-                    Delete
-                  </Button>
-                </CardActions>
-              ) : null}
-            </Card>
-          </LinkItem>
+              </LinkItem>
+            </CardActionArea>
+            {item.owner._id === user?._id && user ? (
+              <CardActions>
+                <Button
+                  onClick={() => dispatch(deleteItem(item._id))}
+                  size="small"
+                  color="error"
+                >
+                  Delete
+                </Button>
+              </CardActions>
+            ) : null}
+          </Card>
         </Grid>
       ))}
     </Grid>
