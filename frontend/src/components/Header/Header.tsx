@@ -1,9 +1,10 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { AppBar, Grid, styled, Toolbar, Typography } from '@mui/material';
 import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../../features/users/usersSlice';
 import UserMenu from './UserMenu';
 import AnonymousMenu from './AnonymousMenu';
+import { useEffect } from 'react';
 
 const Link = styled(NavLink)({
   color: 'inherit',
@@ -15,6 +16,13 @@ const Link = styled(NavLink)({
 
 const Header = () => {
   const user = useAppSelector(selectUser);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [navigate, user]);
 
   return (
     <AppBar position="sticky" sx={{ mb: 2, background: '#22ca46' }}>

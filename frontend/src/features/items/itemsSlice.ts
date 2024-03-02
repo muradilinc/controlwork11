@@ -72,3 +72,5 @@ export const selectItemsLoading = (state: RootState) =>
   state.items.itemsLoading;
 export const selectItemLoading = (state: RootState) => state.items.itemLoading;
 export const selectItemError = (state: RootState) => state.items.itemError;
+export const selectCreateItemLoading = (state: RootState) =>
+  state.items.createLoading;

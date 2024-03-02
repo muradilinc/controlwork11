@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Grid, MenuItem, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  MenuItem,
+  TextField,
+} from '@mui/material';
 import { ItemMutation } from '../../types';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectCategories } from '../categories/categoriesSlice';
 import { getCategories } from '../categories/categoriesThunk';
 import { createItem } from './itemsThunk';
-import { selectItemError } from './itemsSlice';
+import { blue, green } from '@mui/material/colors';
+import { selectCreateItemLoading, selectItemError } from './itemsSlice';
+import { selectUser } from '../users/usersSlice';
+import { useNavigate } from 'react-router-dom';
 
 const ItemForm = () => {
   const dispatch = useAppDispatch();
@@ -20,14 +30,30 @@ const ItemForm = () => {
     image: null,
   });
   const error = useAppSelector(selectItemError);
+  const loading = useAppSelector(selectCreateItemLoading);
+  const user = useAppSelector(selectUser);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [navigate, user]);
+
   const submitFormHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     await dispatch(createItem(state));
+    setState({
+      category: '',
+      title: '',
+      price: '',
+      description: '',
+      image: null,
+    });
   };
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,6 +171,7 @@ const ItemForm = () => {
             <Grid item>
               <Button
                 variant="contained"
+                disabled={loading}
                 sx={{ background: '#22ca46' }}
                 onClick={activateInput}
               >
@@ -154,13 +181,27 @@ const ItemForm = () => {
           </Grid>
         </Grid>
         <Grid item xs>
-          <Button
-            type="submit"
-            sx={{ background: '#22ca46' }}
-            variant="contained"
-          >
-            Create
-          </Button>
+          <Box sx={{ m: 1, position: 'relative' }}>
+            <Button
+              disabled={loading}
+              type="submit"
+              sx={{ background: loading ? blue[500] : '#22ca46' }}
+              variant="contained"
+            >
+              Create
+            </Button>
+            {loading && (
+              <CircularProgress
+                size={24}
+                sx={{
+                  color: green[500],
+                  position: 'absolute',
+                  top: '6px',
+                  left: '30px',
+                }}
+              />
+            )}
+          </Box>
         </Grid>
       </Grid>
     </form>

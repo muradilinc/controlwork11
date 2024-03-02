@@ -36,9 +36,19 @@ const Items = () => {
     },
   });
 
+  const handleDelete = async (id: string) => {
+    await dispatch(deleteItem(id));
+    await dispatch(getItems());
+  };
+
   if (loading) {
     return <Spinner />;
   }
+
+  if (items && items.length === 0) {
+    return <Typography variant="h2">No items!</Typography>;
+  }
+
   return (
     <Grid container spacing={2}>
       {items.map((item) => (
@@ -65,7 +75,7 @@ const Items = () => {
             {item.owner._id === user?._id && user ? (
               <CardActions>
                 <Button
-                  onClick={() => dispatch(deleteItem(item._id))}
+                  onClick={() => handleDelete(item._id)}
                   size="small"
                   color="error"
                 >

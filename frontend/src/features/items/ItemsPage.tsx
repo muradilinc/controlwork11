@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 
 const ItemsPage = () => {
   return (
-    <Box display="flex">
+    <Box display="flex" padding={2}>
       <Categories />
       <Items />
     </Box>

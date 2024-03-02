@@ -39,6 +39,7 @@ const userSchema = new Schema<UserFields, UserModel, UserMethods>({
   phone: {
     type: String,
     required: true,
+    unique: true,
   },
   token: {
     type: String,

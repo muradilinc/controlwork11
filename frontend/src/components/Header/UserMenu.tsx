@@ -43,10 +43,10 @@ const UserMenu: React.FC<Props> = ({ user }) => {
         onClose={handleClose}
         keepMounted
       >
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
         <MenuItem>
           <LinkItem to={'/submit'}>Create Item</LinkItem>
         </MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </>
   );
