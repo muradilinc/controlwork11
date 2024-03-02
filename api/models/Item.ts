@@ -53,6 +53,6 @@ const ItemSchema = new Schema({
   },
 });
 
-const Item = model('Product', ItemSchema);
+const Item = model('Item', ItemSchema);
 
 export default Item;
